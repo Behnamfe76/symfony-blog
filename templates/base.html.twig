@@ -15,9 +15,27 @@
     </head>
     <body>
         {% block body %}
-            <div class="text-red-500">
-                test
+            <div x-data="dropdown">
+                <button @click="toggle">
+                    click
+                </button>
+
+                <div x-show="open">
+                    testing
+                </div>
             </div>
         {% endblock %}
     </body>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dropdown', () => ({
+                open: false,
+
+                toggle() {
+                    this.open = !this.open
+                }
+            }))
+        })
+    </script>
 </html>

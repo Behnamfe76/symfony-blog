@@ -146,18 +146,42 @@
                     </div>
                 </template>
             </div>
-
             <a href="#" class="text-sm/6 h-full flex items-center font-semibold text-gray-900">Features</a>
             <a href="#" class="text-sm/6 h-full flex items-center font-semibold text-gray-900">Marketplace</a>
             <a href="#" class="text-sm/6 h-full flex items-center font-semibold text-gray-900">Company</a>
         </div>
-        <div class="hidden py-6 lg:flex lg:flex-1 lg:justify-end">
+        <div class="hidden h-full lg:flex lg:flex-1 lg:justify-end">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <a href="{{ path('app_logout') }}"
-                   class="text-sm/6 font-semibold text-gray-900 flex items-center gap-2">
-                    <span>خروج از حساب</span>
-                    <i class="fa-solid fa-left-to-bracket"></i>
-                </a>
+                <div class="relative h-full" x-data="dropdown" @mouseleave="closeDropdown" @mouseenter="openDropdown">
+                    <button type="button" class="flex h-full items-center gap-x-1 text-sm/6 font-semibold text-gray-900"
+                            aria-expanded="false">
+                        {{ username ?? 'کاربر' }}
+                        <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                             aria-hidden="true" data-slot="icon">
+                            <path fill-rule="evenodd"
+                                  d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+
+                    <div x-cloak x-show="open"
+                         class="absolute -left-8 top-[3rem] z-10 mt-3 w-[14rem] overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                        <div class="p-4" x-data="links">
+                            <template x-for="link in links" :key="link.label">
+                                <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                    <i :class="link.icon"></i>
+                                    <div class="flex-auto">
+                                        <a x-text="link.label" :href="link.route"
+                                           class="block font-semibold text-gray-900">
+                                            <span class="absolute inset-0"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
             {% else %}
                 <a href="{{ path('app_login') }}" class="text-sm/6 font-semibold text-gray-900 flex items-center gap-2">
                     <span>ورود به حساب</span>
@@ -245,8 +269,15 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
-        console.log('test')
         Alpine.data('dropdown', () => ({
+
+            links: [
+                {label: 'پروفایل کاربری', route: '{{ path('app_profile') }}', icon: 'fa-solid fa-user'},
+                {label: 'پنل مدیریت', route: '#', icon: 'fa-solid fa-solar-panel'},
+                {label: 'ایجاد پست جدید', route: '#', icon: 'fa-solid fa-pen'},
+                {label: 'خروج از حساب', route: '{{ path('app_logout') }}', icon: 'fa-solid fa-left-to-bracket'},
+            ],
+
             open: false,
 
             openDropdown() {

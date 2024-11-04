@@ -1,0 +1,13 @@
+{% extends './base.html.twig' %}
+
+{% block title %}
+    {% block LayoutTitle %} {% endblock %}
+{% endblock %}
+
+{% block body %}
+    {#  public header  #}
+    {% include './partials/headers/header.public.html.twig' %}
+
+    {#  the layout's body  #}
+    {% block BaseLayout %}{% endblock %}
+{% endblock %}

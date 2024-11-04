@@ -21,8 +21,8 @@ class Post
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $published_at;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $published_at = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
@@ -39,9 +39,15 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?PostCategory $postCategory = null;
 
+    #[ORM\Column]
+    private \DateTimeImmutable $created_at;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
+
     public function __construct()
     {
-        $this->published_at = new \DateTimeImmutable();
+        $this->created_at = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -134,6 +140,30 @@ class Post
     public function setPostCategory(?PostCategory $postCategory): static
     {
         $this->postCategory = $postCategory;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

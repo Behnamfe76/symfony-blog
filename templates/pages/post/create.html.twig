@@ -1,0 +1,268 @@
+{% extends './layouts/profile.layout.html.twig' %}
+
+{% block LayoutTitle %}پروفایل کاربری{% endblock %}
+
+{% block ProfileLayout %}
+    <div x-data="global" class="mx-auto w-full py-8 sm:px-6 lg:px-4 bg-white shadow-lg rounded-md">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <!-- We've used 3xl here, but feel free to try other max-widths based on your needs -->
+        <div class="w-full px-8 text-lg font-semibold">
+            ایجاد پست جدید
+        </div>
+        <div class="w-full px-8 mt-4 flex gap-[5rem]">
+            {{ form_start(form, {'attr': {'class': 'w-full'}}) }}
+            <div class="flex gap-4">
+                {# post title #}
+                <div class="w-full">
+                    {{ form_label(form.title, 'عنوان مقاله', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-900' } }) }}
+                    <div class="mt-2">
+                        {{ form_widget(form.title, { 'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm px-4'
+                        } }) }}
+                        <div style="color: red; margin-top: 0.5rem">
+                            {{ form_errors(form.title) }}
+                        </div>
+                    </div>
+                </div>
+
+                {# post type #}
+                <div class="w-full relative">
+                    {{ form_label(form.postType, 'نوع مقاله', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-900' } }) }}
+                    <div class="mt-2">
+                        {{ form_widget(form.postType, { 'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm px-4 appearance-none',
+                            'x-model': 'postType'
+                        } }) }}
+                    </div>
+                    <div style="color: red; margin-top: 0.5rem">
+                        {{ form_errors(form.postType) }}
+                    </div>
+                </div>
+
+                {# post category #}
+                <div class="w-full">
+                    {{ form_label(form.postCategory, 'دسته بندی مقاله', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-900' } }) }}
+                    <div class="mt-2">
+                        {{ form_widget(form.postCategory, { 'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm px-4 appearance-none',
+                        } }) }}
+                        <div style="color: red; margin-top: 0.5rem">
+                            {{ form_errors(form.postCategory) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# post content #}
+            <div>
+                {{ form_label(form.content, 'متن مقاله', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-900 mt-4' } }) }}
+                <div class="mt-2">
+                    {{ form_widget(form.content, { 'attr': { 'class': 'block w-full h-[5rem] rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm py-4' } }) }}
+                    <div style="color: red; margin-top: 0.5rem">
+                        {{ form_errors(form.content) }}
+                    </div>
+                </div>
+            </div>
+            {# post content #}
+            <div>
+                {{ form_label(form.attachment, 'فایل', { 'label_attr': { 'class': 'hidden' } }) }}
+                <div class="mt-2">
+                    {{ form_widget(form.attachment, { 'attr': {
+                        'class': 'hidden',
+                        'x-model': 'attachment'
+                    } }) }}
+                    <div style="color: red; margin-top: 0.5rem">
+                        {{ form_errors(form.attachment) }}
+                    </div>
+                </div>
+            </div>
+
+            {# file upload #}
+            <div class="grid grid-cols-2 items-start mt-4 gap-5">
+                <template x-if="canUpload">
+                    <div class="flex items-center justify-center w-full">
+                        <label for="dropzone-file"
+                               class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+                            <template x-if="fileUrl">
+                                <div class="flex gap-4 text-slate-200">
+                                    <img :src="fileUrl" alt="File Preview"
+                                         class="mt-4 w-[200px] h-fit object-cover rounded-md"/>
+                                    <div class="text-xs">
+                                        <div class="flex gap-2">
+                                            <span>نام فایل : </span>
+                                            <span x-text="fileData.name"></span>
+                                        </div>
+                                        <div class="flex gap-2 my-3">
+                                            <span>اندازه فایل : </span>
+                                            <span x-text="fileData.size / 1000"></span> kb
+                                        </div>
+                                        <div class="flex gap-2 my-3">
+                                            <span>پسوند فایل : </span>
+                                            <span x-text="fileData.name.split('.').pop()"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="fileUrl == null">
+                                <span class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span>
+                                    or drag and drop</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX.
+                                    800x400px)</p>
+                            </span>
+                            </template>
+
+                            <input @change="handleFile" id="dropzone-file" type="file" class="hidden"/>
+                        </label>
+                    </div>
+                </template>
+                <template x-if="fileData && canUpload">
+                    <!-- File Uploading Progress Form -->
+                    <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                        <!-- Body -->
+                        <div class="p-4 md:p-5 space-y-7">
+                            <div>
+                                <!-- Uploading File Content -->
+                                <div class="mb-2 flex justify-between items-center">
+                                    <div class="flex items-center gap-x-3">
+                                          <span class="size-8 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
+                                            <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24"
+                                                 height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                              <polyline points="17 8 12 3 7 8"></polyline>
+                                              <line x1="12" x2="12" y1="3" y2="15"></line>
+                                            </svg>
+                                          </span>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white"
+                                               x-text="fileData.name"></p>
+                                            <p class="text-xs text-gray-500 dark:text-neutral-500">
+                                                <span x-text="fileData.size / 1000000"></span> MB
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-x-2">
+                                        <span class="relative">
+                                            <i x-show="uploadData.status == 'success'" x-cloak class="fa-solid fa-circle-check text-[#14B8A6]"></i>
+                                            <span class="sr-only">Success</span>
+                                         </span>
+                                        <span class="relative">
+                                            <i x-show="uploadData.status == 'error'" x-cloak class="fa-solid fa-circle-x text-red-500"></i>
+                                            <span class="sr-only">Error</span>
+                                         </span>
+                                        <button type="button"
+                                                class="relative text-gray-500 hover:text-gray-800 focus:outline-none focus:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-500 dark:hover:text-neutral-200 dark:focus:text-neutral-200">
+                                            <i class="fa-light fa-trash-can"></i>
+                                            <span class="sr-only">Delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- End Uploading File Content -->
+
+                                <!-- Progress Bar -->
+                                <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                                     role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="flex flex-col justify-center rounded-full overflow-hidden text-xs text-white text-center whitespace-nowrap transition duration-500"
+                                         :style="{ width: `${uploadData.progress}%` }"
+                                         :class="{
+                                            'bg-blue-500' : uploadData.status == 'pending',
+                                            'bg-teal-500' : uploadData.status == 'success',
+                                            'bg-red-500' : uploadData.status == 'error',
+                                         }"
+                                    >
+                                    </div>
+                                </div>
+                                <!-- End Progress Bar -->
+                            </div>
+                        </div>
+                        <!-- End Body -->
+                    </div>
+                    <!-- End File Uploading Progress Form -->
+                </template>
+            </div>
+
+            <button :disabled="false" type="submit" class="btn btn-primary mt-4">
+                ایجاد مقاله
+            </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('alpine:init', () => {
+
+            const uploadFormData = new FormData();
+            Alpine.data('global', () => ({
+                loading: true,
+                fileUrl: null,
+                attachment: null,
+                fileData: null,
+                postType: 1,
+                uploadData: {
+                    progress: 0,
+                    status: 'pending'
+                },
+                canUpload: this.postType !== 3,
+
+                init() {
+                    // Watch for changes to postType
+                    this.$watch('postType', (value) => {
+                        this.canUpload = Number(value) !== 3;
+                    });
+                },
+
+                async uploadFile(file) {
+                    uploadFormData.append(`post_attachment`, file);
+                    uploadFormData.append(`post_type`, this.postType);
+
+                    const config = {
+                        headers: {
+                            Accept: "application/json",
+                            ContentType: "multipart/form-data",
+                        },
+                        onUploadProgress: (uploadEvent) => {
+                            this.uploadData.progress = Math.round((uploadEvent.loaded * 100) / uploadEvent.total);
+                        },
+                    };
+
+                    Axios
+                        .post('{{ path('app_post_upload') }}', uploadFormData, config)
+                        .then((response) => {
+                            console.log('success', response)
+                            this.uploadData.status = 'success';
+                        })
+                        .catch((error) => {
+                            this.uploadData.status = 'error';
+                            console.log('error', error)
+                        });
+                },
+
+                handleFile(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.attachment = file.name;
+                        this.fileData = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.fileUrl = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        this.uploadFile(file)
+                    }
+                }
+            }));
+        });
+    </script>
+{% endblock %}

@@ -270,7 +270,8 @@
             Alpine.data('sideLinks', () => ({
                 sideLinks: [
                     {label: 'داشبورد', route: '{{ path('app_profile') }}', icon: 'fa-solid fa-user'},
-                    {label: 'ایجاد پست جدید', route: '#', icon: 'fa-solid fa-pen'},
+                    {label: 'ایجاد مقاله جدید', route: '{{ path('app_post_create') }}', icon: 'fa-solid fa-pen'},
+                    {label: 'لیست مقالات من', route: '#', icon: 'fa-light fa-copy'},
                 ],
                 currentPage: '{{ page }}'
             }))

@@ -54,10 +54,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    /**
+     * @var Collection<int, TemporaryUploadedFile>
+     */
+    #[ORM\OneToMany(targetEntity: TemporaryUploadedFile::class, mappedBy: 'uploader', orphanRemoval: true)]
+    private Collection $temporaryUploadedFiles;
+
+    /**
+     * @var Collection<int, Approval>
+     */
+    #[ORM\OneToMany(targetEntity: Approval::class, mappedBy: 'changed_by')]
+    private Collection $approvals;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->created_at = new \DateTimeImmutable();
+        $this->temporaryUploadedFiles = new ArrayCollection();
+        $this->approvals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,6 +233,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TemporaryUploadedFile>
+     */
+    public function getTemporaryUploadedFiles(): Collection
+    {
+        return $this->temporaryUploadedFiles;
+    }
+
+    public function addTemporaryUploadedFile(TemporaryUploadedFile $temporaryUploadedFile): static
+    {
+        if (!$this->temporaryUploadedFiles->contains($temporaryUploadedFile)) {
+            $this->temporaryUploadedFiles->add($temporaryUploadedFile);
+            $temporaryUploadedFile->setUploader($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTemporaryUploadedFile(TemporaryUploadedFile $temporaryUploadedFile): static
+    {
+        if ($this->temporaryUploadedFiles->removeElement($temporaryUploadedFile)) {
+            // set the owning side to null (unless already changed)
+            if ($temporaryUploadedFile->getUploader() === $this) {
+                $temporaryUploadedFile->setUploader(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Approval>
+     */
+    public function getApprovals(): Collection
+    {
+        return $this->approvals;
+    }
+
+    public function addApproval(Approval $approval): static
+    {
+        if (!$this->approvals->contains($approval)) {
+            $this->approvals->add($approval);
+            $approval->setChangedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApproval(Approval $approval): static
+    {
+        if ($this->approvals->removeElement($approval)) {
+            // set the owning side to null (unless already changed)
+            if ($approval->getChangedBy() === $this) {
+                $approval->setChangedBy(null);
+            }
+        }
 
         return $this;
     }

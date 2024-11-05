@@ -1,4 +1,5 @@
 @import './fonts.css';
+@import './utilities.css';
 @import 'font-awsome/css/all.css';
 
 @tailwind base;
@@ -9,9 +10,45 @@
     font-family: "Vazirmatn FD", serif;
     direction: rtl;
 }
+select.custom-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    padding-right: 1.5rem; /* Adds space for custom or no icon */
+}
 
 body {
     background-color: #f4f4f4;
 }
 
 [x-cloak] { display: none !important; }
+
+.alert {
+    --bs-alert-bg: transparent;
+    --bs-alert-padding-x: 1rem;
+    --bs-alert-padding-y: 1rem;
+    --bs-alert-margin-bottom: 1rem;
+    --bs-alert-color: inherit;
+    --bs-alert-border-color: transparent;
+    --bs-alert-border: 1px solid var(--bs-alert-border-color);
+    --bs-alert-border-radius: 8px;
+    --bs-alert-link-color: inherit;
+    position: relative;
+    padding: var(--bs-alert-padding-y) var(--bs-alert-padding-x);
+    margin-bottom: var(--bs-alert-margin-bottom);
+    color: var(--bs-alert-color);
+    background-color: var(--bs-alert-bg);
+    border: var(--bs-alert-border);
+    border-radius: var(--bs-alert-border-radius);
+}
+
+.alert-danger {
+    color: #ea868f;
+    background: #f8d7da;
+    border-color: #f1aeb5;
+
+    a {
+        color: #ea868f;
+    }
+}

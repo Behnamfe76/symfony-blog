@@ -15,28 +15,28 @@ class Approval
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $approved_at;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $approved_at = null;
 
     #[ORM\Column(length: 255)]
     private PostStatusEnum $changed_to = PostStatusEnum::PENDING;
 
-    #[ORM\OneToOne(inversedBy: 'approval', cascade: ['persist', 'remove'])]
-    private ?User $changed_by = null;
 
     #[ORM\OneToOne(inversedBy: 'approval', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\ManyToOne(inversedBy: 'approvals')]
+    private ?User $changed_by = null;
+
     public function __construct()
     {
-        $this->approved_at = new \DateTimeImmutable();
         $this->created_at = new \DateTimeImmutable();
     }
     public function getId(): ?int
@@ -67,18 +67,7 @@ class Approval
 
         return $this;
     }
-
-    public function getChangedBy(): ?User
-    {
-        return $this->changed_by;
-    }
-
-    public function setChangedBy(?User $changed_by): static
-    {
-        $this->changed_by = $changed_by;
-
-        return $this;
-    }
+    
 
     public function getPost(): ?Post
     {
@@ -112,6 +101,18 @@ class Approval
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getChangedBy(): ?User
+    {
+        return $this->changed_by;
+    }
+
+    public function setChangedBy(?User $changed_by): static
+    {
+        $this->changed_by = $changed_by;
 
         return $this;
     }

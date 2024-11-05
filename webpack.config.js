@@ -70,6 +70,12 @@ Encore
     //.autoProvidejQuery()
 
     .enablePostCssLoader()
+
+
+    .autoProvideVariables({
+        moment: 'jalali-moment',
+        'jalali-moment': 'jalali-moment'
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

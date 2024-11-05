@@ -2,6 +2,9 @@
     border-radius: 8px;
     padding: 0.5rem 1rem;
     transition: all 0.25s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-primary {

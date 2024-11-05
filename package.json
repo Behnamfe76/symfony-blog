@@ -22,9 +22,12 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@tailwindcss/aspect-ratio": "^0.4.2",
         "@tailwindcss/forms": "^0.5.9",
         "alpinejs": "^3.14.3",
         "axios": "^1.7.7",
-        "lodash": "^4.17.21"
+        "jalali-moment": "^3.3.11",
+        "lodash": "^4.17.21",
+        "moment": "^2.30.1"
     }
 }

@@ -22,22 +22,20 @@ class PostService implements PostServiceInterface
     private TemporaryUploadedFileRepository $tempRepository;
 
     public function __construct(
-        EntityManagerInterface          $entityManager,
-        LoggerInterface                 $logger,
-        TemporaryUploadedFileRepository $tempRepository
-    )
-    {
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        TemporaryUploadedFileRepository $tempRepository,
+    ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->tempRepository = $tempRepository;
     }
 
     public function storeTextualPost(
-        Post                                       $post,
+        Post $post,
         FormInterface|\App\Form\CreatePostFormType $form,
-        User                                       $user,
-    ): Post|\Throwable|\Exception
-    {
+        User $user,
+    ): Post|\Throwable|\Exception {
         try {
             $approval = new Approval();
             $approval->setChangedBy($user);
@@ -57,18 +55,17 @@ class PostService implements PostServiceInterface
             return $post;
         } catch (\Throwable $th) {
             $this->logger->error($th->getMessage());
+
             return $th;
         }
     }
 
     public function storeMediaPost(
-        Post                                       $post,
+        Post $post,
         FormInterface|\App\Form\CreatePostFormType $form,
-        User                                       $user,
-        string                                     $projectDir,
-
-    ): Post|\Throwable|\Exception
-    {
+        User $user,
+        string $projectDir,
+    ): Post|\Throwable|\Exception {
         try {
             $this->entityManager->beginTransaction();
             $fileName = $form->get('attachment')->getData();
@@ -78,14 +75,13 @@ class PostService implements PostServiceInterface
                 $tempFile, $projectDir, $user, Post::class, 'posts'
             );
             if (!$media) {
-                throw new \Exception("Media could not be created or file does not exist.");
+                throw new \Exception('Media could not be created or file does not exist.');
             }
 
             $approval = new Approval();
             $approval->setChangedBy($user);
             $approval->setChangedTo(PostStatusEnum::PENDING); // Change 'getChangedTo' to 'setChangedTo'
             $approval->setPost($post);
-
 
             $post->setAuthor($user);
             $post->setPostType($form->get('postType')->getData());
@@ -112,5 +108,10 @@ class PostService implements PostServiceInterface
 
             return $th;
         }
+    }
+
+    public function userPosts(User $user): \Doctrine\Common\Collections\Collection
+    {
+        return $user->getPosts();
     }
 }

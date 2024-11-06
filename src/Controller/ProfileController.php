@@ -44,4 +44,15 @@ class ProfileController extends AbstractController
             'posts' => $posts,
         ]);
     }
+
+    #[Route('/profile/posts/{post}', name: 'profile_post_show')]
+    public function showPost(Post $post): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        return $this->render('/pages/profile/show.html.twig', [
+            'page' => '/profile/posts',
+            'post' => $post,
+        ]);
+    }
 }

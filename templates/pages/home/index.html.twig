@@ -7,6 +7,7 @@
                 لیست مقالات
             </div>
             <div class="w-full flex-col flex px-8 mt-4 gap-y-[2rem]">
+                {% if posts is not empty %}
                 {% for post in posts %}
                     <div class="flex h-[10rem] w-full shadow-lg rounded-lg bg-slate-100 text-surface shadow-secondary-1">
                         <div class="flex flex-col justify-start p-6 w-full">
@@ -36,6 +37,12 @@
                         </div>
                     </div>
                 {% endfor %}
+                {% else %}
+                    <div class="flex gap-2 justify-center">
+                        مقاله ای یافت نشد
+                        <a href="{{ path('app_post_create') }}" class="text-green-600">اولین مقاله را ایجاد کنید</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 

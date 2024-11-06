@@ -24,6 +24,7 @@ class HomeController extends AbstractController
 
         return $this->render('pages/home/index.html.twig', [
             'username' => $user ? $user->getUsername() : null,
+            'role' => $user ? $user->getRoles()[0] : null,
             'posts' => $posts
         ]);
     }
@@ -34,6 +35,7 @@ class HomeController extends AbstractController
 
         return $this->render('pages/home/post/show.html.twig', [
             'username' => $user ? $user->getUsername() : null,
+            'role' => $user ? $user->getRoles()[0] : null,
             'post' => $post
         ]);
     }

@@ -65,7 +65,7 @@ class PostController extends AbstractController
                 return $this->redirectToRoute('app_post_create');
             }
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('profile_post_list');
         }
 
         return $this->render('/pages/post/create.html.twig', [
@@ -119,7 +119,7 @@ class PostController extends AbstractController
             default => PostStatusEnum::PENDING,
         };
 
-        $result = $this->postService->updatePostStatus();
+        $result = $this->postService->updatePostStatus($post, $postStatus, $this->getUser());
 
         if ($result instanceof \Throwable) {
             return new Response('Failed to change post status', Response::HTTP_BAD_REQUEST);

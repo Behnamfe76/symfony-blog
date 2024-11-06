@@ -168,15 +168,18 @@
                          class="absolute -left-8 top-[3rem] z-10 mt-3 w-[14rem] overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                         <div class="p-4" x-data="links">
                             <template x-for="link in links" :key="link.label">
-                                <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                    <i :class="link.icon"></i>
-                                    <div class="flex-auto">
-                                        <a x-text="link.label" :href="link.route"
-                                           class="block font-semibold text-gray-900">
-                                            <span class="absolute inset-0"></span>
-                                        </a>
+                                <!-- Conditionally render only if adminOnly is not set or role is ROLE_ADMIN -->
+                                <template x-if="!link.adminOnly || role === 'ROLE_ADMIN'">
+                                    <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                        <i :class="link.icon"></i>
+                                        <div class="flex-auto">
+                                            <a x-text="link.label" :href="link.route"
+                                               class="block font-semibold text-gray-900">
+                                                <span class="absolute inset-0"></span>
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
+                                </template>
                             </template>
 
                         </div>
@@ -270,14 +273,13 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('dropdown', () => ({
-
+            role: '{{ role }}',
             links: [
                 {label: 'پروفایل کاربری', route: '{{ path('app_profile') }}', icon: 'fa-solid fa-user'},
-                {label: 'پنل مدیریت', route: '{{ path('app_admin') }}', icon: 'fa-solid fa-solar-panel'},
+                {label: 'پنل مدیریت', route: '{{ path('app_admin') }}', icon: 'fa-solid fa-solar-panel', adminOnly: true},
                 {label: 'ایجاد پست جدید', route: '{{ path('app_post_create') }}', icon: 'fa-solid fa-pen'},
                 {label: 'خروج از حساب', route: '{{ path('app_logout') }}', icon: 'fa-solid fa-left-to-bracket'},
             ],
-
             open: false,
 
             openDropdown() {

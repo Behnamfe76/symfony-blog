@@ -31,7 +31,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/post/create', name: 'app_post_create')]
-    public function index(Request $request): Response
+    public function create(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -59,13 +59,13 @@ class PostController extends AbstractController
             }
             if ($result instanceof \Throwable) {
                 $this->logger->error($result->getMessage());
-                dd($result->getMessage());
+
                 $this->addFlash('error', 'خطای سرور');
 
                 return $this->redirectToRoute('app_post_create');
             }
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('profile_post_list');
         }
 
         return $this->render('/pages/post/create.html.twig', [

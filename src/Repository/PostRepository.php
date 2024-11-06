@@ -82,7 +82,9 @@ class PostRepository extends ServiceEntityRepository
     public function getAllPostList(int $page = 1, int $limit = 10): array
     {
         $queryBuilder = $this->createQueryBuilder('p')
-            ->select('p.title',
+            ->select(
+                'p.id',
+                'p.title',
                 'pc.name AS category_name',
                 'pt.name AS type_name',
                 'pa.username AS author_name',

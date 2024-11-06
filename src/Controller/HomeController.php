@@ -27,7 +27,7 @@ class HomeController extends AbstractController
             'posts' => $posts
         ]);
     }
-    #[Route('/post/{post}', name: 'app_home_post')]
+    #[Route('/home/posts/{post}', name: 'app_home_post')]
     public function post(Post $post): Response
     {
         $user = $this->getUser();

@@ -52,6 +52,7 @@ class AdminController extends AbstractController
         ]);
     }
 
+
     #[Route('/admin/posts/{post}', name: 'app_admin_posts_show')]
     public function showPost(Post $post): Response
     {

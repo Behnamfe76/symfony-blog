@@ -229,8 +229,14 @@
                                  role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
                                  tabindex="-1">
                                 <!-- Active: "bg-gray-50 outline-none", Not Active: "" -->
+                                <a href="{{ path('app_profile') }}" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem"
+                                   tabindex="-1" id="user-menu-item-1">
+                                   پروفایل
+                                </a>
                                 <a href="{{ path('app_logout') }}" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem"
-                                   tabindex="-1" id="user-menu-item-1">Sign out</a>
+                                   tabindex="-1" id="user-menu-item-1">
+                                    خروج از حساب
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -21,6 +21,7 @@ interface PostServiceInterface
 
     public function userPosts(User $user);
     public function getUnpublishedPostList(int $page, int $perPage);
+    public function getPublishedPostList();
     public function getAllPostList(int $page, int $perPage);
     public function updatePostStatus(Post $post, PostStatusEnum $status, User $user);
 

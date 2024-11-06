@@ -141,6 +141,16 @@ class PostService implements PostServiceInterface
             return $th;
         }
     }
+    public function getPublishedPostList()
+    {
+        try {
+            return $this->postRepository->getPublishedPostList();
+        } catch (\Throwable $th) {
+            $this->logger->error($th->getMessage());
+
+            return $th;
+        }
+    }
 
     public function updatePostStatus(Post $post, PostStatusEnum $status, User $user)
     {

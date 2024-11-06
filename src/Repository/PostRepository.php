@@ -54,6 +54,30 @@ class PostRepository extends ServiceEntityRepository
             'total' => $total,
         ];
     }
+    public function getPublishedPostList()
+    {
+        return $this->createQueryBuilder('p')
+            ->select(
+                'p.id',
+                'p.title',
+                'p.content',
+                'p.published_at',
+                'pc.name AS category_name',
+                'pt.name AS type_name',
+                'pa.username AS author_name',
+                'a.changed_to as status'
+            )
+            ->leftJoin('p.approval', 'a')
+            ->leftJoin('p.author', 'pa')
+            ->leftJoin('p.postCategory', 'pc')
+            ->leftJoin('p.postType', 'pt')
+            ->where('a.changed_to = :status')
+            ->setParameter('status', 'published')
+            ->orderBy('p.created_at', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     public function getAllPostList(int $page = 1, int $limit = 10): array
     {
@@ -88,4 +112,5 @@ class PostRepository extends ServiceEntityRepository
             'total' => $total,
         ];
     }
+
 }

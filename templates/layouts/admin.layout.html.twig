@@ -12,27 +12,7 @@
             <div class="fixed inset-0 bg-gray-900/80" aria-hidden="true"></div>
 
             <div class="fixed inset-0 flex">
-                <!--
-                  Off-canvas menu, show/hide based on off-canvas menu state.
-
-                  Entering: "transition ease-in-out duration-300 transform"
-                    From: "-translate-x-full"
-                    To: "translate-x-0"
-                  Leaving: "transition ease-in-out duration-300 transform"
-                    From: "translate-x-0"
-                    To: "-translate-x-full"
-                -->
                 <div class="relative mr-16 flex w-full max-w-xs flex-1">
-                    <!--
-                      Close button, show/hide based on off-canvas menu state.
-
-                      Entering: "ease-in-out duration-300"
-                        From: "opacity-0"
-                        To: "opacity-100"
-                      Leaving: "ease-in-out duration-300"
-                        From: "opacity-100"
-                        To: "opacity-0"
-                    -->
                     <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
                         <button type="button" class="-m-2.5 p-2.5">
                             <span class="sr-only">Close sidebar</span>
@@ -259,7 +239,7 @@
 
             <main class="py-10">
                 <div class="px-4 sm:px-6 lg:px-8">
-                    {% block ProfileLayout %} {% endblock %}
+                    {% block AdminLayout %} {% endblock %}
                 </div>
             </main>
         </div>
@@ -270,9 +250,11 @@
             Alpine.data('sideLinks', () => ({
                 sideLinks: [
                     {label: 'صفحه اصلی', route: '{{ path('app_home') }}', icon: 'fa-solid fa-house'},
-                    {label: 'داشبورد', route: '{{ path('app_profile') }}', icon: 'fa-solid fa-user'},
-                    {label: 'ایجاد مقاله جدید', route: '{{ path('app_post_create') }}', icon: 'fa-solid fa-pen'},
-                    {label: 'لیست مقالات من', route: '{{ path('profile_post_list') }}', icon: 'fa-light fa-copy'},
+                    {label: 'داشبورد', route: '{{ path('app_admin') }}', icon: 'fa-solid fa-user'},
+                    {label: 'مدیریت مقالات', route: '#', icon: 'fa-solid fa-memo-circle-check'},
+                    {label: 'مدیریت دسته ها', route: '#', icon: 'fa-solid fa-layer-group'},
+                    {label: 'مدیریت نوع مقالات', route: '#', icon: 'fa-light fa-typewriter'},
+                    {label: 'مدیریت کاربران', route: '#', icon: 'fa-light fa-users'},
                 ],
                 currentPage: '{{ page }}'
             }))

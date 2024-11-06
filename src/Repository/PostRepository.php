@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,75 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    //    /**
-    //     * @return Post[] Returns an array of Post objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getUnpublishedPostList(int $page = 1, int $limit = 10): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->select(
+                'p.id',
+                'p.title',
+                'pc.name AS category_name',
+                'pt.name AS type_name',
+                'pa.username AS author_name',
+                'a.changed_to as status'
+            )
+            ->leftJoin('p.approval', 'a')
+            ->leftJoin('p.author', 'pa')
+            ->leftJoin('p.postCategory', 'pc')
+            ->leftJoin('p.postType', 'pt')
+            ->where('a.changed_to != :status')
+            ->setParameter('status', 'published')
+            ->orderBy('p.created_at', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
 
-    //    public function findOneBySomeField($value): ?Post
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $query = $queryBuilder->getQuery();
+        $results = $query->getScalarResult();
+
+
+        $totalQueryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->leftJoin('p.approval', 'a')
+            ->where('a.changed_to != :status')
+            ->setParameter('status', 'published');
+        $total = (int) $totalQueryBuilder->getQuery()->getSingleScalarResult();
+
+        return [
+            'data' => $results,
+            'total' => $total,
+        ];
+    }
+
+    public function getAllPostList(int $page = 1, int $limit = 10): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->select('p.title',
+                'pc.name AS category_name',
+                'pt.name AS type_name',
+                'pa.username AS author_name',
+                'a.changed_to as status'
+            )
+            ->leftJoin('p.approval', 'a')
+            ->leftJoin('p.author', 'pa')
+            ->leftJoin('p.postCategory', 'pc')
+            ->leftJoin('p.postType', 'pt')
+            ->orderBy('p.created_at', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $query = $queryBuilder->getQuery();
+        $results = $query->getScalarResult();
+
+
+        $totalQueryBuilder = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->leftJoin('p.approval', 'a')
+            ->where('a.changed_to != :status')
+            ->setParameter('status', 'published');
+        $total = (int) $totalQueryBuilder->getQuery()->getSingleScalarResult();
+
+        return [
+            'data' => $results,
+            'total' => $total,
+        ];
+    }
 }

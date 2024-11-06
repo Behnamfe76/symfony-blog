@@ -1,0 +1,281 @@
+{% extends './layouts/admin.layout.html.twig' %}
+
+{% block LayoutTitle %}نمایش پست{% endblock %}
+
+{% block AdminLayout %}
+    <div x-data="global" class="mx-auto max-w-7xl py-8 sm:px-6 lg:px-4 bg-white shadow-lg rounded-md">
+        <div class="w-full px-8">
+            <div class="bg-white">
+                <div class="mx-auto max-w-2xl lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+                    <!-- Post details -->
+                    <div class="lg:max-w-lg lg:self-end">
+                        {# bread crump #}
+                        <nav aria-label="Breadcrumb">
+                            <ol role="list" class="flex items-center space-x-2">
+                                <li>
+                                    <div class="flex items-center text-sm">
+                                        <a href="{{ path('app_admin') }}"
+                                           class="font-medium text-gray-500 hover:text-gray-900">مقالات</a>
+                                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                                             class="ml-2 h-5 w-5 shrink-0 text-gray-300">
+                                            <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z"/>
+                                        </svg>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="flex items-center text-sm">
+                                        <a href="#" class="font-medium text-gray-500 hover:text-gray-900">مشاهده
+                                            مقاله</a>
+                                    </div>
+                                </li>
+                            </ol>
+                        </nav>
+
+                        {# post title #}
+                        <div class="mt-4">
+                            <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                                {{ post.getTitle() }}
+                            </h1>
+                        </div>
+
+                        <section aria-labelledby="information-heading" class="mt-4">
+                            <h2 id="information-heading" class="sr-only">Post information</h2>
+
+                            {# post information #}
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="flex gap-2 items-center justify-start w-full">
+                                    {# author #}
+                                    <div class="ml-4 border-l border-gray-300 pl-4">
+                                        <p class="text-sm font-semibold text-gray-900">نویسنده</p>
+                                        <h2 class="sr-only">author</h2>
+                                        <div class="flex items-center">
+                                            <p class="text-sm text-gray-500">
+                                                {{ post.getAuthor().username }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {# created at #}
+                                    <div class="ml-4 border-l border-gray-300 pl-4">
+                                        <p class="text-sm font-semibold text-gray-900">تاریخ ایجاد پست</p>
+                                        <h2 class="sr-only">author</h2>
+                                        <div class="flex items-center">
+                                            <p class="text-sm text-gray-500"
+                                               x-text="Momentj.unix({{ post.getCreatedAt().getTimeStamp() }}).locale('fa').format('YYYY-M-D')"></p>
+                                        </div>
+                                    </div>
+
+                                    {# status #}
+                                    <div class="ml-4 border-l border-gray-300 pl-4">
+                                        <p class="text-sm font-semibold text-gray-900">وضعیت</p>
+                                        <h2 class="sr-only">status</h2>
+                                        <div class="flex items-center">
+                                            <span class="text-xs px-[4px] py-[2px] rounded-lg w-fit"
+                                                  :class="declareStatus('{{ post.getApproval().getChangedTo().value }}').classAttributes"
+                                                  x-text="declareStatus('{{ post.getApproval().getChangedTo().value }}').status"></span>
+                                        </div>
+                                    </div>
+
+                                    {# published at #}
+                                    {% if post.getPublishedAt() %}
+                                        <div class="ml-4 border-l border-gray-300 pl-4">
+                                            <p class="text-sm font-semibold text-gray-900">تاریخ انتشار پست</p>
+                                            <h2 class="sr-only">author</h2>
+                                            <div class="flex items-center">
+                                                <p class="text-sm text-gray-500"
+                                                   x-text="Momentj.unix({{ post.getPublishedAt().getTimeStamp() ?? date().getTimeStamp() }}).locale('fa').format('YYYY-M-D')"></p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex gap-2 items-center justify-start w-full">
+                                    {# post category #}
+                                    <div class="ml-4 border-l border-gray-300 pl-4">
+                                        <p class="text-sm font-semibold text-gray-900">دسته بندی</p>
+                                        <h2 class="sr-only">status</h2>
+                                        <div class="flex items-center">
+                                            <p class="text-sm text-gray-500">
+                                                {{ post.getPostCategory().getName() }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {# status #}
+                                    <div class="ml-4 border-l border-gray-300 pl-4">
+                                        <p class="text-sm font-semibold text-gray-900">نوع مقاله</p>
+                                        <h2 class="sr-only">type</h2>
+                                        <div class="flex items-center">
+                                            <p class="text-sm text-gray-500">
+                                                {{ post.getPostType().getName() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {# post content #}
+                            <div class="mt-4 space-y-6">
+                                <p class="text-base text-gray-500">
+                                    {{ post.getContent() }}
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Post image -->
+                    <div class="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
+                        <div class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg">
+                            <img src="{{ post.getMedia()[0].getLink() }}"
+                                 alt="Model wearing light green backpack with black canvas straps and front zipper pouch."
+                                 class="h-full w-full object-cover object-center">
+                        </div>
+                    </div>
+
+                    <!-- Post form -->
+                    <div x-data="{status: {{ post.getApproval().getChangedTo().value|json_encode }}}" class="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
+                        <section aria-labelledby="options-heading">
+                            <div>
+                                <label id="listbox-label" class="sr-only">Change published status</label>
+                                <div class="relative">
+                                    <div class="inline-flex divide-x divide-indigo-700 rounded-md shadow-sm">
+                                        <button @click="toggleStatusButton" type="button"
+                                                class="inline-flex items-center rounded-l-none rounded-r-md bg-indigo-600 p-2 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-gray-50"
+                                                aria-haspopup="listbox" aria-expanded="true"
+                                                aria-labelledby="listbox-label">
+                                            <span class="sr-only">Change published status</span>
+                                            <svg class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor"
+                                                 aria-hidden="true" data-slot="icon">
+                                                <path fill-rule="evenodd"
+                                                      d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                      clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+                                        <div
+                                             class="inline-flex items-center gap-x-1.5 rounded-l-md bg-indigo-600 px-3 py-2 text-white shadow-sm">
+                                            <p class="text-sm font-semibold"
+                                               x-text="declareStatus('{{ post.getApproval().getChangedTo().value }}').status"></p>
+                                        </div>
+                                    </div>
+
+                                    <ul x-show="statusButton"
+                                        class="absolute right-[10rem] bottom-0 z-10 mt-2 w-72  divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                        tabindex="-1" role="listbox" aria-labelledby="listbox-label"
+                                        aria-activedescendant="listbox-option-0">
+                                        <template x-for="(item, index) in statuses">
+                                            <li
+                                                    @click="changeStatus(item.status)"
+                                                    :class="{
+                                                            'bg-indigo-600': item.status === 'post.getApproval().getChangedTo().value'
+                                                        }"
+                                                    class="cursor-pointer group hover:text-white hover:bg-indigo-600 select-none p-4 text-sm text-gray-900"
+                                                    id="listbox-option-0" role="option"
+                                            >
+                                                <div class="flex flex-col">
+                                                    <div class="flex justify-between">
+                                                        <p class="font-normal" x-text="item.label"></p>
+                                                    </div>
+                                                    <p class="mt-2 text-gray-500 group-hover:text-gray-200" x-text="item.description"></p>
+                                                </div>
+                                            </li>
+                                        </template>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+
+            Alpine.data('global', () => ({
+                statusButton: false,
+                statuses: [
+                    {
+                        status: 'published',
+                        label: 'منتشر شده',
+                        description: 'با انتشار مقاله،‌ تمامی کاربران قادر به بازدید مقاله میباشند.'
+                    },
+                    {
+                        status: 'pending',
+                        label: 'در انتظار انتشار',
+                        description: 'تغییر وضعیت برای بررسی مجدد محتوای مقاله.'
+                    },
+                    {status: 'draft', label: 'بایگانی', description: 'بایگانی مقاله جهت انتشار در زمانی دیگر.'},
+                    {status: 'rejected', label: 'رد شده', description: 'عدم پذیرش مقاله و ارجاع به نویسنده جهت اصلاح.'},
+                    {
+                        status: 'approved',
+                        label: 'تایید شده',
+                        description: 'با تایید مقاله،‌ مقاله جهت انتشار آماده میباشد.'
+                    },
+                    {
+                        status: 'archived',
+                        label: 'آرشیو شده',
+                        description: 'با آرشیو مقاله،‌ درسترسی به آن محدود خواهد شد.'
+                    },
+                ],
+
+                changeStatus(status){
+                   console.log(status);
+                    Axios.put('{{ path('app_post_change_status', { post: post.getId() }) }}', {
+                        status // newStatus should be the status you want to set
+                    })
+                        .then(response => {
+                            // Handle success
+                            console.log('Status changed successfully', response);
+                            window.location.reload()
+                        })
+                        .catch(error => {
+                            // Handle error
+                            console.error('Error changing status:', error);
+                        });
+                },
+                toggleStatusButton() {
+                    this.statusButton = !this.statusButton
+                },
+
+
+                declareStatus(status) {
+                    let result = 'در انتظار تایید';
+                    let classAttributes = 'bg-blue-100 border border-blue-600 text-blue-600'
+                    switch (status) {
+                        case 'pending':
+                            result = 'در انتظار تایید';
+                            classAttributes = 'bg-blue-100 border border-blue-600 text-blue-600';
+                            break;
+                        case 'approved':
+                            result = 'در انتظار انتشار';
+                            classAttributes = 'bg-blue-100 border border-blue-600 text-blue-600';
+                            break;
+                        case 'published':
+                            result = 'منتشر شده';
+                            classAttributes = 'bg-green-100 border border-green-600 text-green-600';
+                            break;
+                        case 'draft':
+                            result = 'بایگانی شده';
+                            classAttributes = 'bg-orange-100 border border-orange-600 text-orange-600';
+                            break;
+                        case 'rejected':
+                            result = 'رد شده';
+                            classAttributes = 'bg-red-100 border border-red-600 text-red-600';
+                            break;
+                        case 'archived':
+                            result = 'آرشیو شده';
+                            classAttributes = 'bg-rose-100 border border-rose-600 text-rose-600';
+                            break;
+                        default:
+                            classAttributes = 'bg-blue-100 border border-blue-600 text-blue-600';
+                            result = 'در انتظار تایید';
+                    }
+                    return {status: result, classAttributes};
+                }
+            }));
+        });
+
+    </script>
+{% endblock %}
